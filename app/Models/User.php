@@ -58,6 +58,54 @@ class User extends Authenticatable implements PasskeyUser
     }
 
     /**
+     * @return HasMany<BudgetLine, $this>
+     */
+    public function budgetLines(): HasMany
+    {
+        return $this->hasMany(BudgetLine::class);
+    }
+
+    /**
+     * @return HasMany<MonthlyFigure, $this>
+     */
+    public function monthlyFigures(): HasMany
+    {
+        return $this->hasMany(MonthlyFigure::class);
+    }
+
+    /**
+     * @return HasMany<RecurringCost, $this>
+     */
+    public function recurringCosts(): HasMany
+    {
+        return $this->hasMany(RecurringCost::class);
+    }
+
+    /**
+     * @return HasMany<Holding, $this>
+     */
+    public function holdings(): HasMany
+    {
+        return $this->hasMany(Holding::class);
+    }
+
+    /**
+     * @return HasMany<HousingPlan, $this>
+     */
+    public function housingPlans(): HasMany
+    {
+        return $this->hasMany(HousingPlan::class);
+    }
+
+    /**
+     * @return HasMany<Account, $this>
+     */
+    public function accounts(): HasMany
+    {
+        return $this->hasMany(Account::class);
+    }
+
+    /**
      * Get the user's initials
      */
     public function initials(): string

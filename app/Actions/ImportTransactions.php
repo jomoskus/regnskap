@@ -2,6 +2,8 @@
 
 namespace App\Actions;
 
+use App\Enums\Category;
+use App\Enums\PaymentMethod;
 use App\Models\Transaction;
 use App\Models\User;
 use Carbon\CarbonImmutable;
@@ -12,7 +14,10 @@ use Throwable;
 class ImportTransactions
 {
     /**
-     * Import a stored CSV. Every row starts uncategorized. Duplicates on
+     * Import a stored CSV. Bank files without a kategori column stay
+     * uncategorized. Ledger files that include kategori (and optionally
+     * betalingsmåte / notat) keep those values. Unknown category names
+     * become null so the row lands in the inbox. Duplicates on
      * user_id + booked_on + amount + payee are skipped.
      *
      * @return array{imported: int, skipped: int}
@@ -64,12 +69,28 @@ class ImportTransactions
                 continue;
             }
 
+            $category = $mapping['category'] !== null
+                ? Category::tryFromLabel(isset($row[$mapping['category']]) ? (string) $row[$mapping['category']] : null)
+                : null;
+
+            $paymentMethod = $mapping['payment_method'] !== null
+                ? PaymentMethod::tryFromLabel(isset($row[$mapping['payment_method']]) ? (string) $row[$mapping['payment_method']] : null)
+                : null;
+
+            $note = null;
+            if ($mapping['note'] !== null) {
+                $note = trim((string) ($row[$mapping['note']] ?? ''));
+                $note = $note === '' ? null : $note;
+            }
+
             Transaction::query()->create([
                 'user_id' => $user->id,
                 'booked_on' => $date,
                 'amount' => $amount,
                 'payee' => $payee,
-                'category' => null,
+                'category' => $category,
+                'payment_method' => $paymentMethod,
+                'note' => $note,
             ]);
 
             $imported++;
@@ -80,7 +101,7 @@ class ImportTransactions
 
     /**
      * @param  list<list<string|null>>  $rows
-     * @param  array{date: int, amount: int, payee: int, has_header: bool}  $mapping
+     * @param  array{date: int, amount: int, payee: int, category: int|null, payment_method: int|null, note: int|null, has_header: bool}  $mapping
      * @return list<list<string|null>>
      */
     private function dataRows(array $rows, array $mapping): array
@@ -94,31 +115,39 @@ class ImportTransactions
 
     /**
      * @param  list<list<string|null>>  $rows
-     * @return array{date: int, amount: int, payee: int, has_header: bool}
+     * @return array{date: int, amount: int, payee: int, category: int|null, payment_method: int|null, note: int|null, has_header: bool}
      */
     private function detectColumns(array $rows): array
     {
         $header = $rows[0] ?? [];
         $normalized = array_map(
-            fn (mixed $value): string => Str::of((string) $value)->lower()->trim()->toString(),
+            fn (mixed $value): string => Str::of((string) $value)->lower()->trim()->ascii()->toString(),
             $header,
         );
 
         $date = $this->firstColumn($normalized, [
             'date', 'dato', 'booked_on', 'booked', 'booking date', 'transaksjonsdato',
-            'bokført', 'bokfort', 'posted', 'valutadato', 'valuedate',
+            'bokfort', 'posted', 'valutadato', 'valuedate',
             'transaction date', 'posting date',
         ]);
         $amount = $this->firstColumn($normalized, [
-            'amount', 'beløp', 'belop', 'sum', 'amount_nok', 'beløp nok',
-            'verdi', 'beløp i nok', 'amount nok',
+            'amount', 'belop', 'sum', 'amount_nok', 'verdi', 'amount nok',
         ]);
         $payee = $this->firstColumn($normalized, [
             'payee', 'text', 'tekst', 'beskrivelse', 'brukersted', 'merchant',
             'description', 'melding', 'navn', 'til/fra',
         ]);
+        $category = $this->firstColumn($normalized, [
+            'kategori', 'category',
+        ]);
+        $paymentMethod = $this->firstColumn($normalized, [
+            'betalingsmate', 'payment_method', 'payment method', 'betalingsmaate',
+        ]);
+        $note = $this->firstColumn($normalized, [
+            'notat', 'note', 'notes',
+        ]);
 
-        $hasHeader = $date !== null || $amount !== null || $payee !== null;
+        $hasHeader = $date !== null || $amount !== null || $payee !== null || $category !== null;
 
         $sample = $hasHeader ? ($rows[1] ?? []) : ($rows[0] ?? []);
 
@@ -136,6 +165,9 @@ class ImportTransactions
             'date' => $date ?? 0,
             'amount' => $amount ?? 1,
             'payee' => $payee ?? 2,
+            'category' => $category,
+            'payment_method' => $paymentMethod,
+            'note' => $note,
             'has_header' => $hasHeader,
         ];
     }
