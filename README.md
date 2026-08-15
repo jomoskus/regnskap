@@ -1,6 +1,6 @@
 # Økonomi
 
-Personlig regnskap for Johannes de Haan. Livewire-app: innboks for å kategorisere, manuell registrering og CSV-import. Forslag vises, men settes aldri automatisk.
+Personlig regnskapsapp. Livewire: innboks for å kategorisere, manuell registrering og CSV-import. Forslag vises, men settes aldri automatisk.
 
 ## Lokalt
 
