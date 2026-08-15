@@ -28,6 +28,10 @@ Bank-CSV uten `kategori` blir ukategorisert. En ledger-CSV med `dato,belop,kateg
 
 Migrasjonene er portable (ingen SQLite-spesifikke kolonner), så samme skjema kjører mot MySQL eller Postgres.
 
+## API
+
+Innstillinger → **Agent**: opprett en personlig tilgangsnøkkel (standardnavn «Personlig regnskapsfører»). Nøkkelen vises bare én gang. Bruk den som `Authorization: Bearer …` mot `/api` (for eksempel `GET /api/me`). Ikke commit nøkkelen.
+
 ## Utvikling
 
 ```bash
