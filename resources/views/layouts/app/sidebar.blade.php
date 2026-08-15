@@ -11,24 +11,50 @@
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
-                <flux:sidebar.group :heading="__('Platform')" class="grid">
-                    <flux:sidebar.item icon="home" :href="route('inbox')" :current="request()->routeIs('inbox')" wire:navigate>
+                <flux:sidebar.group :heading="__('Regnskap')" class="grid">
+                    <flux:sidebar.item icon="inbox" :href="route('inbox')" :current="request()->routeIs('inbox')" wire:navigate>
                         {{ __('Innboks') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="chart-bar" :href="route('overview')" :current="request()->routeIs('overview')" wire:navigate>
+                        {{ __('Oversikt') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="queue-list" :href="route('transactions.index')" :current="request()->routeIs('transactions.index')" wire:navigate>
+                        {{ __('Transaksjoner') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="plus" :href="route('transactions.create')" :current="request()->routeIs('transactions.create')" wire:navigate>
+                        {{ __('Ny') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="arrow-up-tray" :href="route('transactions.import')" :current="request()->routeIs('transactions.import')" wire:navigate>
+                        {{ __('Import') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
+
+                <flux:sidebar.group :heading="__('Plan')" class="grid">
+                    <flux:sidebar.item icon="calculator" :href="route('budget.index')" :current="request()->routeIs('budget.index')" wire:navigate>
+                        {{ __('Budsjett') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="arrow-path" :href="route('recurring.index')" :current="request()->routeIs('recurring.index')" wire:navigate>
+                        {{ __('Faste kostnader') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
+
+                <flux:sidebar.group :heading="__('Formue')" class="grid">
+                    <flux:sidebar.item icon="banknotes" :href="route('wealth.index')" :current="request()->routeIs('wealth.index')" wire:navigate>
+                        {{ __('Formue') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="chart-pie" :href="route('investments.index')" :current="request()->routeIs('investments.index')" wire:navigate>
+                        {{ __('Investeringer') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="home" :href="route('housing.index')" :current="request()->routeIs('housing.index')" wire:navigate>
+                        {{ __('Bolig') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="building-library" :href="route('accounts.index')" :current="request()->routeIs('accounts.index')" wire:navigate>
+                        {{ __('Kontoer') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 
             <flux:spacer />
-
-            <flux:sidebar.nav>
-                <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    {{ __('Repository') }}
-                </flux:sidebar.item>
-
-                <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                    {{ __('Documentation') }}
-                </flux:sidebar.item>
-            </flux:sidebar.nav>
 
             <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
         </flux:sidebar>

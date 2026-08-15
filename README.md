@@ -1,6 +1,6 @@
 # Økonomi
 
-Personlig regnskapsapp. Livewire: innboks for å kategorisere, manuell registrering og CSV-import. Forslag vises, men settes aldri automatisk.
+Personlig regnskapsapp. Livewire: innboks for å kategorisere, manuell registrering, CSV-import, oversikt, budsjett, formue, investeringer, faste kostnader og bolig. Forslag vises, men settes aldri automatisk.
 
 ## Lokalt
 
@@ -14,7 +14,9 @@ php artisan serve
 
 Standard database er SQLite (`database/database.sqlite`). Registrer deg på `/register` — det er meningen, også i skyen.
 
-Etter innlogging lander du i **Innboks** (`/inbox`). Én transaksjon om gangen: velg kategori, hopp over, eller del opp i to. **Ny** og **Import** ligger i menyen.
+Etter innlogging lander du i **Innboks** (`/inbox`). Én transaksjon om gangen: velg kategori, hopp over, eller del opp i to. **Ny**, **Import**, **Oversikt** og de andre sidene ligger i menyen.
+
+Bank-CSV uten `kategori` blir ukategorisert. En ledger-CSV med `dato,belop,kategori,brukersted,betalingsmate,notat` beholder kategori (ukjente navn blir tomme).
 
 ## Laravel Cloud
 
@@ -24,7 +26,7 @@ Etter innlogging lander du i **Innboks** (`/inbox`). Én transaksjon om gangen: 
 4. Slå på **hibernation** (scale to zero) på appen og databasen, så du ikke betaler når den sover.
 5. Deploy. Første gang: åpne appen, registrer deg som første bruker, og importer CSV fra Innboks → Import.
 
-Migrasjonene er portable (ingen SQLite-spesifikke kolonner), så samme skjema kjører mot Postgres i Cloud.
+Migrasjonene er portable (ingen SQLite-spesifikke kolonner), så samme skjema kjører mot MySQL eller Postgres.
 
 ## Utvikling
 

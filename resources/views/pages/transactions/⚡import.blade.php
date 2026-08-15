@@ -50,7 +50,7 @@ new #[Title('Import')] class extends Component
     <div class="space-y-2">
         <flux:heading size="xl">{{ __('Import') }}</flux:heading>
         <flux:text>
-            {{ __('Last opp en CSV. Dato-, beløp- og tekstkolonner gjettes. Alle rader starter ukategorisert. Duplikater (samme dato, beløp og brukersted) hoppes over.') }}
+            {{ __('Last opp en CSV. Bankfiler uten kategori-kolonne lander i innboksen. Har filen kolonnene dato, beløp, kategori, brukersted (og valgfritt betalingsmåte og notat), beholdes de. Ukjent kategori blir stående tom. Duplikater hoppes over.') }}
         </flux:text>
     </div>
 
